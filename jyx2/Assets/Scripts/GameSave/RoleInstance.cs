@@ -72,6 +72,28 @@ namespace Jyx2
 
 
         [SerializeField] public int CurrentSkill = 0; //当前技能
+
+        //扩展参数 供mod使用
+        [SerializeField] public int ExtendIntData1 = 0;
+        [SerializeField] public int ExtendIntData2 = 0;
+        [SerializeField] public int ExtendIntData3 = 0;
+        [SerializeField] public int ExtendIntData4 = 0;
+        [SerializeField] public int ExtendIntData5 = 0;
+        [SerializeField] public int ExtendIntData6 = 0;
+        [SerializeField] public int ExtendIntData7 = 0;
+        [SerializeField] public int ExtendIntData8 = 0;
+        [SerializeField] public int ExtendIntData9 = 0;
+        [SerializeField] public int ExtendIntData10 = 0;
+
+        [SerializeField] public float ExtendIntFloatData1 = 0.0f;
+        [SerializeField] public float ExtendIntFloatData2 = 0.0f;
+        [SerializeField] public float ExtendIntFloatData3 = 0.0f;
+        [SerializeField] public float ExtendIntFloatData4 = 0.0f;
+        [SerializeField] public float ExtendIntFloatData5 = 0.0f;
+
+        [SerializeField] public List<SkillInstance> ExtendWugongs1 = new List<SkillInstance>(); //扩展武功栏1
+        [SerializeField] public List<SkillInstance> ExtendWugongs2 = new List<SkillInstance>(); //扩展武功栏2
+
         #endregion
 
         public RoleInstance()
@@ -108,85 +130,48 @@ namespace Jyx2
             ResetForBattle();
         }
 
-
-#if !INJECTFIX_PATCH_ENABLE
         void InitData()
         {
-            //CG 初始化
-            Name = Data.Name;
-            Sex = (int)Data.Sexual;
-            Level = Data.Level;
-            Exp = Data.Exp;
-            Hp = Data.MaxHp;
-            PreviousRoundHp = Hp;
-            MaxHp = Data.MaxHp;
-            Mp = Data.MaxMp;
-            MaxMp = Data.MaxMp;
-            Tili = GameConst.MAX_ROLE_TILI;
-            Weapon = Data.Weapon;
-            Armor = Data.Armor;
-            MpType = Data.MpType;
-            Attack = Data.Attack;
-            Qinggong = Data.Qinggong;
-            Defence = Data.Defence;
-            Heal = Data.Heal;
-            UsePoison = Data.UsePoison;
-            DePoison = Data.DePoison;
-            AntiPoison = Data.AntiPoison;
-            Quanzhang = Data.Quanzhang;
-            Yujian = Data.Yujian;
-            Shuadao = Data.Shuadao;
-            Qimen = Data.Qimen;
-            Anqi = Data.Anqi;
-            Wuxuechangshi = Data.Wuxuechangshi;
-            Pinde = Data.Pinde;
-            AttackPoison = Data.AttackPoison;
-            Zuoyouhubo = Data.Zuoyouhubo;
-            IQ = Data.IQ;
-            HpInc = Data.HpInc;
-
-            ResetItems();
+            var useLuaFunction = LuaExecutor.CallLua<Boolean>("Jyx2.Role.InitData", this);
+            if (useLuaFunction==null || !useLuaFunction)
+            {
+                //CG 初始化
+                Name = Data.Name;
+                Sex = (int)Data.Sexual;
+                Level = Data.Level;
+                Exp = Data.Exp;
+                Hp = Data.MaxHp;
+                PreviousRoundHp = Hp;
+                MaxHp = Data.MaxHp;
+                Mp = Data.MaxMp;
+                MaxMp = Data.MaxMp;
+                Tili = GameConst.MAX_ROLE_TILI;
+                Weapon = Data.Weapon;
+                Armor = Data.Armor;
+                MpType = Data.MpType;
+                Attack = Data.Attack;
+                Qinggong = Data.Qinggong;
+                Defence = Data.Defence;
+                Heal = Data.Heal;
+                UsePoison = Data.UsePoison;
+                DePoison = Data.DePoison;
+                AntiPoison = Data.AntiPoison;
+                Quanzhang = Data.Quanzhang;
+                Yujian = Data.Yujian;
+                Shuadao = Data.Shuadao;
+                Qimen = Data.Qimen;
+                Anqi = Data.Anqi;
+                Wuxuechangshi = Data.Wuxuechangshi;
+                Pinde = Data.Pinde;
+                AttackPoison = Data.AttackPoison;
+                Zuoyouhubo = Data.Zuoyouhubo;
+                IQ = Data.IQ;
+                HpInc = Data.HpInc;
+                ResetItems();
+            }
+            
         }
-#else
-        [IFix.Patch]
-        void InitData()
-        {
-            //CG 初始化
-            Name = Data.Name;
-            Sex = (int)Data.Sexual;
-            Level = Data.Level;
-            Exp = Data.Exp;
-            Hp = Data.MaxHp;
-            PreviousRoundHp = Hp;
-            MaxHp = Data.MaxHp;
-            Mp = Data.MaxMp;
-            MaxMp = Data.MaxMp + 1000;
-            Tili = GameConst.MAX_ROLE_TILI;
-            Weapon = Data.Weapon;
-            Armor = Data.Armor;
-            MpType = Data.MpType;
-            Attack = Data.Attack;
-            Qinggong = Data.Qinggong;
-            Defence = Data.Defence;
-            Heal = Data.Heal;
-            UsePoison = Data.UsePoison;
-            DePoison = Data.DePoison;
-            AntiPoison = Data.AntiPoison;
-            Quanzhang = Data.Quanzhang;
-            Yujian = Data.Yujian;
-            Shuadao = Data.Shuadao;
-            Qimen = Data.Qimen;
-            Anqi = Data.Anqi;
-            Wuxuechangshi = Data.Wuxuechangshi;
-            Pinde = Data.Pinde;
-            AttackPoison = Data.AttackPoison;
-            Zuoyouhubo = Data.Zuoyouhubo;
-            IQ = Data.IQ;
-            HpInc = Data.HpInc;
 
-            ResetItems();
-        }
-#endif
 
         public void ResetForBattle()
         {
@@ -272,38 +257,40 @@ namespace Jyx2
         public void LevelUp()
         {
             Level++;
-            Tili = GameConst.MAX_ROLE_TILI;
-            MaxHp += (HpInc + Random.Range(0, 3)) * 3;
-            SetHPAndRefreshHudBar(this.MaxHp);
-            //当0 <= 资质 < 30, a = 2;
-            //当30 <= 资质 < 50, a = 3;
-            //当50 <= 资质 < 70, a = 4;
-            //当70 <= 资质 < 90, a = 5;
-            //当90 <= 资质 <= 100, a = 6;
-            //a = random(a) + 1;
-            int a = Random.Range(0, (int)Math.Floor((double)(IQ - 10) / 20) + 2) + 1;
-            MaxMp += (9 - a) * 4;
-            Mp = MaxMp;
+            var useLuaFunction = LuaExecutor.CallLua<Boolean>("Jyx2.Role.LevelUp", this);
+            if(useLuaFunction==null || !useLuaFunction)
+            {
+                Tili = GameConst.MAX_ROLE_TILI;
+                MaxHp += (HpInc + Random.Range(0, 3)) * 3;
+                SetHPAndRefreshHudBar(this.MaxHp);
+                //当0 <= 资质 < 30, a = 2;
+                //当30 <= 资质 < 50, a = 3;
+                //当50 <= 资质 < 70, a = 4;
+                //当70 <= 资质 < 90, a = 5;
+                //当90 <= 资质 <= 100, a = 6;
+                //a = random(a) + 1;
+                int a = Random.Range(0, (int)Math.Floor((double)(IQ - 10) / 20) + 2) + 1;
+                MaxMp += (9 - a) * 4;
+                Mp = MaxMp;
 
-            Hurt = 0;
-            Poison = 0;
+                Hurt = 0;
+                Poison = 0;
 
-            Attack += a;
-            Qinggong += a;
-            Defence += a;
+                Attack += a;
+                Qinggong += a;
+                Defence += a;
 
-            Heal = checkUp(Heal, 20, 3);
-            DePoison = checkUp(DePoison, 20, 3);
-            UsePoison = checkUp(UsePoison, 20, 3);
+                Heal = checkUp(Heal, 20, 3);
+                DePoison = checkUp(DePoison, 20, 3);
+                UsePoison = checkUp(UsePoison, 20, 3);
 
-            Quanzhang = checkUp(Quanzhang, 20, 3);
-            Yujian = checkUp(Yujian, 20, 3);
-            Shuadao = checkUp(Shuadao, 20, 3);
-            Anqi = checkUp(Anqi, 20, 3);
+                Quanzhang = checkUp(Quanzhang, 20, 3);
+                Yujian = checkUp(Yujian, 20, 3);
+                Shuadao = checkUp(Shuadao, 20, 3);
+                Anqi = checkUp(Anqi, 20, 3);
 
-            this.LimitAllAttrs();
-
-            Debug.Log($"{this.Name}升到{this.Level}级！");
+                this.LimitAllAttrs();
+            }
         }
 
         /// <summary>
@@ -547,6 +534,9 @@ namespace Jyx2
         public bool CanUseItem(LItemConfig item)
         {
             if (item == null) return false;
+            //用以lua覆盖这个方法
+            var useLuaFunctionResult = LuaExecutor.CallLua<Boolean>("Jyx2.Role.CanUseItem", this,item);
+            if(useLuaFunctionResult!=null) return useLuaFunctionResult;
 
             //剧情类无人可以使用
             if (item.ItemType == 0)
@@ -723,60 +713,63 @@ namespace Jyx2
         {
             if (item == null)
                 return;
-
-            this.Tili += item.AddTili;
-            //吃药机制
-            //参考：https://github.com/ZhanruiLiang/jinyong-legend
-            int add = item.AddHp - this.Hurt / 2 + Random.Range(0, 10);
-            if (add <= 0)
+            var useLuaFunction = LuaExecutor.CallLua<Boolean>("Jyx2.Role.UseItem", this,item);
+            if(useLuaFunction==null || !useLuaFunction)
             {
-                add = 5 + Random.Range(0, 5);
-            }
-            this.Hurt -= item.AddHp / 4;
-            this.SetHPAndRefreshHudBar(this.Hp + add);
-            this.MaxHp += item.AddMaxHp;
-            this.Mp += item.AddMp;
-            this.MaxMp += item.AddMaxMp;
-            this.Poison += item.ChangePoisonLevel / 2;
-            this.Heal += item.Heal;
-            this.DePoison += item.DePoison;
-            this.AntiPoison += item.AntiPoison;
-            this.UsePoison += item.UsePoison;
-
-            this.Attack += item.Attack;
-            this.Defence += item.Defence;
-            this.Qinggong += item.Qinggong;
-
-            this.Quanzhang += item.Quanzhang;
-            this.Yujian += item.Yujian;
-            this.Shuadao += item.Shuadao;
-            this.Qimen += item.Qimen;
-            this.Anqi += item.Anqi;
-
-            this.Pinde += item.AddPinde;
-            this.AttackPoison += item.AttackPoison;
-
-            if (item.ChangeMPType == 2)
-            {
-                this.MpType = 2;
-            }
-
-            if (item.Zuoyouhubo == 1)
-            {
-                this.Zuoyouhubo = 1;
-            }
-
-            if (CanFinishedItem())
-            {
-                if (item.Skill != null)
+                this.Tili += item.AddTili;
+                //吃药机制
+                //参考：https://github.com/ZhanruiLiang/jinyong-legend
+                int add = item.AddHp - this.Hurt / 2 + Random.Range(0, 10);
+                if (add <= 0)
                 {
-                    this.LearnMagic(item.Skill);
+                    add = 5 + Random.Range(0, 5);
+                }
+                this.Hurt -= item.AddHp / 4;
+                this.SetHPAndRefreshHudBar(this.Hp + add);
+                this.MaxHp += item.AddMaxHp;
+                this.Mp += item.AddMp;
+                this.MaxMp += item.AddMaxMp;
+                this.Poison += item.ChangePoisonLevel / 2;
+                this.Heal += item.Heal;
+                this.DePoison += item.DePoison;
+                this.AntiPoison += item.AntiPoison;
+                this.UsePoison += item.UsePoison;
+
+                this.Attack += item.Attack;
+                this.Defence += item.Defence;
+                this.Qinggong += item.Qinggong;
+
+                this.Quanzhang += item.Quanzhang;
+                this.Yujian += item.Yujian;
+                this.Shuadao += item.Shuadao;
+                this.Qimen += item.Qimen;
+                this.Anqi += item.Anqi;
+
+                this.Pinde += item.AddPinde;
+                this.AttackPoison += item.AttackPoison;
+
+                if (item.ChangeMPType == 2)
+                {
+                    this.MpType = 2;
                 }
 
-                this.ExpForItem = 0;
-            }
+                if (item.Zuoyouhubo == 1)
+                {
+                    this.Zuoyouhubo = 1;
+                }
 
-            this.LimitAllAttrs();
+                if (CanFinishedItem())
+                {
+                    if (item.Skill != null)
+                    {
+                        this.LearnMagic(item.Skill);
+                    }
+
+                    this.ExpForItem = 0;
+                }
+
+                this.LimitAllAttrs();
+            }
         }
 
         /// <summary>
@@ -1015,18 +1008,8 @@ namespace Jyx2
         //获得行动力
         //参考：https://github.com/ZhanruiLiang/jinyong-legend
         public int GetMoveAbility()
-        {
-            if (Tili <= 5)
-                return 0; //金庸DOS版逻辑，体力小于等于5无法移动
-            int speed = this.Qinggong;
-
-            speed = speed / 15 - this.Hurt / 40;
-
-            if (speed < 0)
-            {
-                speed = 0;
-            }
-            return speed;
+        {       
+            return LuaExecutor.CallLua<int>("Jyx2.Role.GetMoveAbility", this);
         }
 
         //是否是AI控制

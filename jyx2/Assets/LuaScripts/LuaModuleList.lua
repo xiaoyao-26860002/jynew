@@ -12,5 +12,6 @@
 local LuaModuleList = {
     ConfigMgr = "Jyx2Configs/Jyx2ConfigMgr",
     Battle = "Jyx2Battle/BattleInit",
+    Role = "Jyx2Battle/RoleInstance"
 }
 return LuaModuleList
